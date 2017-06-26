@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 
+// data from: http://hubwaydatachallenge.org/
 const stations=[
   {stat: 16, station: "Back Bay / South End Station"},
   {stat: 20, station: "Aquarium Station - 200 Atlantic Ave."},
