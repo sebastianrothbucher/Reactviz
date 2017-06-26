@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 
 // data from: http://hubwaydatachallenge.org/
+// TODO: cleanse data better (should kick out some rides 2 self), re-think rides 2 self
 const stations=[
   {stat: 16, station: "Back Bay / South End Station"},
   {stat: 20, station: "Aquarium Station - 200 Atlantic Ave."},
@@ -258,7 +259,7 @@ class App extends PureComponent {
       });
       (isHighlight?arcsHighlight:arcs).push(<path key={"over_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+4)+" A "+(radius+4)+" "+(radius+4)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+4)} fill="none" strokeWidth="10" stroke={(isHighlight?"green":"grey")} />);
       arcs.push(<path key={"caption_"+s1.stat} id={"caption_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+20)+" A "+(radius+20)+" "+(radius+20)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+20)} fill="none" strokeWidth="0" />);
-      arcs.push(<text key={"lbl_"+s1.stat} fontSize="12"><textPath href={"#caption_"+s1.stat}>{s1.stat}</textPath></text>);
+      arcs.push(<text key={"lbl_"+s1.stat} fontSize="12"><textPath href={"#caption_"+s1.stat}>{s1.stat}</textPath></text>); // TODO: center, mirror
     });
     return (
       <div>
