@@ -213,7 +213,7 @@ const trips={ // [mine-other]: cnt
 
 const size=500;
 const middle=Math.round(size/2);
-const radius=Math.round(size/2-10);
+const radius=Math.round(size/2-20);
 const bend=radius*8;
 
 let deg2Point=(deg, radius_) => (Math.round(middle+(radius_ || radius)*Math.cos(deg*2*Math.PI/360))+" "+Math.round(middle-(radius_ || radius)*Math.sin(deg*2*Math.PI/360)));
@@ -233,7 +233,8 @@ class App extends PureComponent {
     let currentDeg=0;
     [].concat(stations).forEach((s1, i1) => {
       let stationStartDeg=currentDeg;
-      [].concat(stations.filter((s_, i_) => i_<i1).reverse(), stations.filter((s_, i_) => i_>=i1).reverse()).forEach((s2, i2) => {
+      // (solution for trip to oneself is still mediocre, but there is no really good solution - putting it in the middle in terms of deg is also fishy)
+      [].concat(stations.filter((s_, i_) => i_<i1).reverse(), stations.filter((s_, i_) => i_==i1), stations.filter((s_, i_) => i_>i1).reverse()).forEach((s2, i2) => {
         let key=s1.stat+"-"+s2.stat;
         let tripDeg=(trips[key] || 0)*degPerTrip;
         let nextDeg=currentDeg+tripDeg;
@@ -247,7 +248,6 @@ class App extends PureComponent {
     let arcsHighlight=[];
     [].concat(stations).forEach((s1, i1) => {
       let isHighlight=(this.state.highlight==s1.stat);
-      (isHighlight?arcsHighlight:arcs).push(<path key={"caption_"+s1.stat} id={"caption_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+5)+" A "+(radius+5)+" "+(radius+5)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+5)} fill="none" strokeWidth="10" stroke={(isHighlight?"green":"grey")} />);
       [].concat(stations).filter((s_, i_) => i_>i1).forEach((s2, i2) => {
         let isHighlight=(this.state.highlight==s1.stat || this.state.highlight==s2.stat);
         let fromLand=landings[s1.stat+"-"+s2.stat];
@@ -255,7 +255,9 @@ class App extends PureComponent {
         let isInverseAngle=(Math.abs(fromLand.start-toLand.end)>180);
         (isHighlight?arcsHighlight:arcs).push(<path key={s1.stat+"-"+s2.stat} d={"M "+deg2Point(fromLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(fromLand.end)+" A "+bend+" "+bend+" 0 0 "+(isInverseAngle?"0":"1")+" "+deg2Point(toLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(toLand.end)+" A "+bend+" "+bend+" 0 0 "+(isInverseAngle?"1":"0")+" "+deg2Point(fromLand.start)} fill={(isHighlight?"green":"lightgrey")} />);
       });
-      arcs.push(<text key={s1.stat}><textPath href={"#caption_"+s1.stat}>{s1.stat}</textPath></text>);
+      (isHighlight?arcsHighlight:arcs).push(<path key={"over_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+4)+" A "+(radius+4)+" "+(radius+4)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+4)} fill="none" strokeWidth="10" stroke={(isHighlight?"green":"grey")} />);
+      arcs.push(<path key={"caption_"+s1.stat} id={"caption_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+20)+" A "+(radius+20)+" "+(radius+20)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+20)} fill="none" strokeWidth="0" />);
+      arcs.push(<text key={"lbl_"+s1.stat} fontSize="12"><textPath href={"#caption_"+s1.stat}>{s1.stat}</textPath></text>);
     });
     return (
       <div>
