@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 const stations=[
   {stat: 16, station: "Back Bay / South End Station"},
@@ -218,7 +218,14 @@ const bend=radius*2.5;
 
 let deg2Point=(deg, radius_) => (Math.round(middle+(radius_ || radius)*Math.cos(deg*2*Math.PI/360))+" "+Math.round(middle-(radius_ || radius)*Math.sin(deg*2*Math.PI/360)));
 
-class App extends Component {
+class App extends PureComponent {
+  constructor(props){
+    super(props);
+    this.state={};
+  }
+  _onMouseOver(stat){
+    this.setState({highlight: stat});
+  }
   render() {
     let landings={}; // [mine-other]: {mine, other, start, end}
     let degPerTrip=(360-stations.length)/Object.keys(trips).map((k) => trips[k]).reduce((t1, t2) => t1+t2, 0);
@@ -237,18 +244,21 @@ class App extends Component {
       currentDeg+=1; // small space between
     });
     let arcs=[];
+    let arcsHighlight=[];
     stations.forEach((s1, i1) => {
-      arcs.push(<path key={s1.stat} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+5)+" A "+(radius+5)+" "+(radius+5)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+5)} fill="none" strokeWidth="10" stroke="black" />);
+      let isHighlight=(this.state.highlight==s1.stat);
+      (isHighlight?arcsHighlight:arcs).push(<path key={s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+5)+" A "+(radius+5)+" "+(radius+5)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+5)} fill="none" strokeWidth="10" stroke={(isHighlight?"green":"black")} />);
       stations.filter((s_, i_) => i_>i1).forEach((s2, i2) => {
+        let isHighlight=(this.state.highlight==s1.stat || this.state.highlight==s2.stat);
         let fromLand=landings[s1.stat+"-"+s2.stat];
         let toLand=landings[s2.stat+"-"+s1.stat];
-        arcs.push(<path key={s1.stat+"-"+s2.stat} d={"M "+deg2Point(fromLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(fromLand.end)+" A "+bend+" "+bend+" 0 0 1 "+deg2Point(toLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(toLand.end)+" A "+bend+" "+bend+" 0 0 0 "+deg2Point(fromLand.start)} fill="grey" />);
+        (isHighlight?arcsHighlight:arcs).push(<path key={s1.stat+"-"+s2.stat} d={"M "+deg2Point(fromLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(fromLand.end)+" A "+bend+" "+bend+" 0 0 1 "+deg2Point(toLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(toLand.end)+" A "+bend+" "+bend+" 0 0 0 "+deg2Point(fromLand.start)} fill={(isHighlight?"lightgreen":"grey")} />);
       });
     });
     return (
       <div>
         <svg width={size} height={size}>
-          {arcs}
+          {[].concat(arcs, arcsHighlight)}
         </svg>
       </div>
     );
