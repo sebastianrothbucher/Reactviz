@@ -214,7 +214,7 @@ const trips={ // [mine-other]: cnt
 const size=500;
 const middle=Math.round(size/2);
 const radius=Math.round(size/2-10);
-const bend=radius*2.5;
+const bend=radius*5;
 
 let deg2Point=(deg, radius_) => (Math.round(middle+(radius_ || radius)*Math.cos(deg*2*Math.PI/360))+" "+Math.round(middle-(radius_ || radius)*Math.sin(deg*2*Math.PI/360)));
 
