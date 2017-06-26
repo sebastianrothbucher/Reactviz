@@ -252,7 +252,8 @@ class App extends PureComponent {
         let isHighlight=(this.state.highlight==s1.stat || this.state.highlight==s2.stat);
         let fromLand=landings[s1.stat+"-"+s2.stat];
         let toLand=landings[s2.stat+"-"+s1.stat];
-        (isHighlight?arcsHighlight:arcs).push(<path key={s1.stat+"-"+s2.stat} d={"M "+deg2Point(fromLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(fromLand.end)+" A "+bend+" "+bend+" 0 0 1 "+deg2Point(toLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(toLand.end)+" A "+bend+" "+bend+" 0 0 0 "+deg2Point(fromLand.start)} fill={(isHighlight?"lightgreen":"grey")} />);
+        let isInverseAngle=(Math.abs(fromLand.start-toLand.end)>180);
+        (isHighlight?arcsHighlight:arcs).push(<path key={s1.stat+"-"+s2.stat} d={"M "+deg2Point(fromLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(fromLand.end)+" A "+bend+" "+bend+" 0 0 "+(isInverseAngle?"0":"1")+" "+deg2Point(toLand.start)+" A "+radius+" "+radius+" 0 0 0 "+deg2Point(toLand.end)+" A "+bend+" "+bend+" 0 0 "+(isInverseAngle?"1":"0")+" "+deg2Point(fromLand.start)} fill={(isHighlight?"lightgreen":"grey")} />);
       });
       arcs.push(<text key={s1.stat}><textPath href={"#caption_"+s1.stat}>{s1.stat}</textPath></text>);
     });
