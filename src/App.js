@@ -233,7 +233,7 @@ class App extends PureComponent {
     let currentDeg=0;
     [].concat(stations).forEach((s1, i1) => {
       let stationStartDeg=currentDeg;
-      [].concat(stations).forEach((s2, i2) => {
+      [].concat(stations.filter((s_, i_) => i_<i1).reverse(), stations.filter((s_, i_) => i_>=i1).reverse()).forEach((s2, i2) => {
         let key=s1.stat+"-"+s2.stat;
         let tripDeg=(trips[key] || 0)*degPerTrip;
         let nextDeg=currentDeg+tripDeg;
@@ -248,7 +248,6 @@ class App extends PureComponent {
     [].concat(stations).forEach((s1, i1) => {
       let isHighlight=(this.state.highlight==s1.stat);
       (isHighlight?arcsHighlight:arcs).push(<path key={"caption_"+s1.stat} id={"caption_"+s1.stat} onMouseOver={(() => this._onMouseOver(s1.stat)).bind(this)} d={"M "+deg2Point(stationArcs[s1.stat].start, radius+5)+" A "+(radius+5)+" "+(radius+5)+" 0 0 0 "+deg2Point(stationArcs[s1.stat].end, radius+5)} fill="none" strokeWidth="10" stroke={(isHighlight?"green":"black")} />);
-      // TODO: first and 2nd half, other angle and order by next
       [].concat(stations).filter((s_, i_) => i_>i1).forEach((s2, i2) => {
         let isHighlight=(this.state.highlight==s1.stat || this.state.highlight==s2.stat);
         let fromLand=landings[s1.stat+"-"+s2.stat];
